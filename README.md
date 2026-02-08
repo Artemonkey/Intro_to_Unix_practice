@@ -6,7 +6,7 @@
 
 Итоговые скрипты используют оболочку **bash** как более надежный и достаточно функциональный интерпертатор команд в отличие от аналогов (zsh, ksh, dash, fish и сам sh). Каждый скрипт проверен статическим анализатором **shellcheck** в подробном режиме.
 
-Описание заданий и скриптов в папках репозитория:
+Описание заданий и скриптов:
 
 1. [Генератор паролей](https://github.com/Artemonkey/Intro_to_Unix_practice/blob/main/password_generator/)
 2. [Анализатор зависимостей](https://github.com/Artemonkey/Intro_to_Unix_practice/blob/main/shell_scripts_dependencies_analizer/)
