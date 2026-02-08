@@ -1,0 +1,13 @@
+# Text files
+*.txt
+*.doc
+*.doc#
+*.docx
+*.docx#
+
+# PDFs
+*.pdf
+
+# Archives
+*.zip*
+*.rar*

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# file name var
+FILE_NAME='newfile.sh'
+
+POWDER
+
+wow; touch "$FILE_NAME"; rm "$FILE_NAME"
+
+echo end
+
+printf 'that was not an end...'
