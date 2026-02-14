@@ -120,7 +120,8 @@ function checkPasswordStrength() {
     # get mandatory sets
     for symbol_set in "${MANDATORY_SYMBOLS[@]}"; do
         # check if password has symbol in trimmed set
-        if grep -F -q -e "$(printf '%s\n' "$symbol_set" | sed 's/./&\n/g')" <<< "$PASSWORD"; then
+        if grep -F -q -e "$(printf '%s\n' "$symbol_set" | \
+        sed 's/./&\n/g')" <<< "$PASSWORD"; then
             (( number_of_group_matches++ ))
         fi
     done
