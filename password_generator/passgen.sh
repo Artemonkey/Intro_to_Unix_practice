@@ -15,8 +15,15 @@ export LC_CTYPE=C
 # Defaults
 PASSWORD_SIZE=12
 PASSWORD=""
-# TODO: prohibited passwords
-#PROHIBITED_COMBINATIONS=""
+PROHIBITED_COMBINATIONS=(
+    '123'
+    '890'
+    'changeme'
+    'qwerty'
+    'asdfg'
+    'zxcvb'
+    '+A777'
+)
 
 # Limits
 MIN_PASSWORD_SIZE=3
@@ -55,7 +62,11 @@ while [[ $# -gt 0 ]]; do
                 exit 1
             else
                 if [[ "$2" -lt "$MIN_PASSWORD_SIZE" ]]; then
-                    echo -e "Sorry, but size of password is too small (less than $MIN_PASSWORD_SIZE symbols).\nPassword, will be the default size - $PASSWORD_SIZE.\n"
+                    printf "\n"
+                    printf 'Sorry, but size of password is too small (less than %s symbols).' "$MIN_PASSWORD_SIZE"
+                    printf "\n"
+                    printf 'Password, will be the default size - %s.'  "$PASSWORD_SIZE"
+                    printf "\n\n"
                 else
                     PASSWORD_SIZE="${2-}"
                 fi
@@ -81,6 +92,25 @@ set -- "${POSITIONAL_ARGS[@]-''}" s
 for (( group_number = 0; group_number < ${#SIMILAR_SYMBOLS[@]}; group_number++)); do
     SIMILAR_SYMBOLS_COUNTER[group_number]=0
 done
+
+function findWordsInString() {
+    local STRING="${1-}"
+    shift
+    local SET_OF_WORDS
+    SET_OF_WORDS=("$@")
+
+    if [[ -z "$STRING" ]] || [[ ${#SET_OF_WORDS[@]} -eq 0 ]]; then
+        return 1
+    fi
+
+    for word in "${SET_OF_WORDS[@]}"; do
+        if printf "%s" "$STRING" | grep -q "$word"; then
+            return 0
+        fi
+    done
+
+    return 1
+}
 
 # Password symbol check
 function checkSoloSymbolInSymbolGroups() {
@@ -120,7 +150,8 @@ function checkPasswordStrength() {
     # get mandatory sets
     for symbol_set in "${MANDATORY_SYMBOLS[@]}"; do
         # check if password has symbol in trimmed set
-        if grep -F -q -e "$(printf '%s\n' "$symbol_set" | sed 's/./&\n/g')" <<< "$PASSWORD"; then
+        if grep -F -q -e "$(printf '%s\n' "$symbol_set" | \
+        sed 's/./&\n/g')" <<< "$PASSWORD"; then
             (( number_of_group_matches++ ))
         fi
     done
@@ -154,7 +185,8 @@ function generatePassword() {
 
 function main() {
     # Run and check password generator
-    while ! checkPasswordStrength "$PASSWORD"; do
+    while (! checkPasswordStrength "$PASSWORD") || \
+    (findWordsInString "$PASSWORD" "${PROHIBITED_COMBINATIONS[@]}"); do
         generatePassword
     done
     
