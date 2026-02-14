@@ -75,20 +75,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 # restore positional parameter
-set -- "${POSITIONAL_ARGS[@]-'default'}" s
+set -- "${POSITIONAL_ARGS[@]-''}" s
 
 # Fill up counter arrays with zeros
-for (( group_number = 0; group_number < ${#MANDATORY_SYMBOLS[@]}; group_number++)); do
-    SIMILAR_SYMBOLS_COUNTER[group_number]=0
-done
-
 for (( group_number = 0; group_number < ${#SIMILAR_SYMBOLS[@]}; group_number++)); do
     SIMILAR_SYMBOLS_COUNTER[group_number]=0
 done
-
-# TODO: Dictionary of prohibited passwords
-# PROHIBITED_PASSWORDS={}
-
 
 # Password symbol check
 function checkSoloSymbolInSymbolGroups() {
