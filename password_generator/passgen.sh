@@ -8,6 +8,10 @@
 # -u - exit if some variable is null. Even one variable is enough to end script execution.
 set -eou pipefail
 
+
+# fix illegal type (byte) sequence
+export LC_CTYPE=C
+
 # Defaults
 PASSWORD_SIZE=12
 PASSWORD=""
@@ -71,7 +75,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # restore positional parameter
-set -- "${POSITIONAL_ARGS[@]}" s
+set -- "${POSITIONAL_ARGS[@]-'default'}" s
 
 # Fill up counter arrays with zeros
 for (( group_number = 0; group_number < ${#MANDATORY_SYMBOLS[@]}; group_number++)); do
