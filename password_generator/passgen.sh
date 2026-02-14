@@ -55,7 +55,11 @@ while [[ $# -gt 0 ]]; do
                 exit 1
             else
                 if [[ "$2" -lt "$MIN_PASSWORD_SIZE" ]]; then
-                    echo -e "Sorry, but size of password is too small (less than $MIN_PASSWORD_SIZE symbols).\nPassword, will be the default size - $PASSWORD_SIZE.\n"
+                    printf "\n"
+                    printf 'Sorry, but size of password is too small (less than %s symbols).' "$MIN_PASSWORD_SIZE"
+                    printf "\n"
+                    printf 'Password, will be the default size - %s.'  "$PASSWORD_SIZE"
+                    printf "\n\n"
                 else
                     PASSWORD_SIZE="${2-}"
                 fi
