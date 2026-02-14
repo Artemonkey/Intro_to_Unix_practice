@@ -138,44 +138,37 @@ function checkPasswordStrength() {
 
 # Function of password creation
 function generatePassword() {
-    while true; do
-        PASSWORD=''
-        
-        # clear counters
-        for (( group_number=0; group_number < ${#SIMILAR_SYMBOLS[@]}; group_number++ )); do
-            SIMILAR_SYMBOLS_COUNTER[group_number]=0
-        done
+    PASSWORD=''
 
-        while [[ ${#PASSWORD} -lt "$PASSWORD_SIZE" ]]; do
-            # generate random symbol (one of symbols from keyboard or space)
-            local RANDOM_SYMBOL
-            RANDOM_SYMBOL=$(< /dev/urandom tr -dc '[:print:]' | head -c 1)
-            
-            # check symbol in password
-            if ! echo "$PASSWORD" | grep -F -q "$RANDOM_SYMBOL" && \
-            [[ $(checkSoloSymbolInSymbolGroups "$RANDOM_SYMBOL") -eq 0 ]]; then
-                # add symbol in the end of password
-                PASSWORD+="$RANDOM_SYMBOL"
-            fi
-        done
+    # clear counters
+    for (( group_number=0; group_number < ${#SIMILAR_SYMBOLS[@]}; group_number++ )); do
+        SIMILAR_SYMBOLS_COUNTER[group_number]=0
+    done
 
-        if checkPasswordStrength "$PASSWORD"; then
-            return 0
+    while [[ ${#PASSWORD} -lt "$PASSWORD_SIZE" ]]; do
+        # generate random symbol (one of symbols from keyboard or space)
+        local RANDOM_SYMBOL
+        RANDOM_SYMBOL=$(< /dev/urandom tr -dc '[:print:]' | head -c 1) && sleep 0.001
+        # check symbol in password
+        if ! echo "$PASSWORD" | grep -F -q "$RANDOM_SYMBOL" && \
+        [[ $(checkSoloSymbolInSymbolGroups "$RANDOM_SYMBOL") -eq 0 ]]; then
+            # add symbol in the end of password
+            PASSWORD+="$RANDOM_SYMBOL"
         fi
     done
+    
+    return 0
 }
 
 function main() {
     # Run and check password generator
-    if generatePassword; then
-        # display password in console
-        echo "Your password: $PASSWORD"
-        exit 0
-    else
-        # exit message
-        echo -e "Error occurred while generating password: error code - $?\n\nPlease try again."
-        exit 1
-    fi
+    while ! checkPasswordStrength "$PASSWORD"; do
+        generatePassword
+    done
+    
+    # display password in console
+    echo "Your password: $PASSWORD"
+    exit 0
 }
 
 main
