@@ -15,7 +15,7 @@ http_methods = [
 def saveHTTPRequestContent() -> None:
     header_lines = []
     while True: 
-        request_line = input()
+        request_line = input().strip()
         # Проверяем на окончание запроса – пришла пустая строка
         if request_line:
             # Сохраняем строки заголовков
@@ -35,10 +35,9 @@ def checkHTTPRequestFirstLineSemantic(query: str) -> bool:
         return True
     return False
 
-
 def main():
     # Читаем первую строку из STDIN
-    first_line = input()
+    first_line = input().strip()
     # Проверяем на минимальные требования HTTP запроса
     if checkHTTPRequestFirstLineSemantic(first_line):
         # Читаем строки заголовков до пустой строки
