@@ -1,0 +1,11 @@
+[Unit]
+Description=A socket for http service
+# Dependencies
+PartOf=friendly.service
+
+[Socket]
+ListenStream=127.0.0.1:8888
+
+[Install]
+WantedBy=sockets.target
+
