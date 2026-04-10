@@ -4,6 +4,7 @@ Description=A socket for http service
 PartOf=friendly.service
 
 [Socket]
+Accept=yes
 ListenStream=127.0.0.1:8888
 
 [Install]
