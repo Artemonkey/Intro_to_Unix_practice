@@ -18,6 +18,12 @@ http_methods = [
 
 
 def check_http_request_first_line_semantic(query: str) -> bool:
+    """
+    Проверка для первых трех обязательных слов в HTTP запросе: 
+        (0) название метода,
+        (1) request-target и query,
+        (2) версия HTTP протокола.
+    """
     words = query.partition('\n')[0].split(' ')
     if len(words) != 3:
         return False
@@ -27,6 +33,7 @@ def check_http_request_first_line_semantic(query: str) -> bool:
 
 
 def send_response(conn_file, status_code: int, body: str = '') -> None:
+    """Отправляет HTTP ответ с указанным статусом и телом."""
     reason = 'OK' if status_code == 200 else 'Bad Request'
     body_bytes = body.encode('utf-8')
     conn_file.write(f'HTTP/1.0 {status_code} {reason}\r\n'.encode('latin-1'))
@@ -40,6 +47,7 @@ def send_response(conn_file, status_code: int, body: str = '') -> None:
 
 
 def handle_connection(conn: socket.socket) -> None:
+    """Обрабатывает входящее соединение, читая HTTP запрос и отправляя ответ."""
     with conn, conn.makefile('rwb') as conn_file:
         first_line_bytes = conn_file.readline()
         if not first_line_bytes:
@@ -60,6 +68,11 @@ def handle_connection(conn: socket.socket) -> None:
 
 
 def get_activated_socket() -> Optional[socket.socket]:
+    """
+    Пытается получить сокет, переданный systemd при активации.
+    
+    Если сокет не найден или не соответствует ожиданиям, возвращает None.
+    """
     listen_pid = os.environ.get('LISTEN_PID')
     listen_fds = os.environ.get('LISTEN_FDS')
     if not listen_pid or not listen_fds:
@@ -76,12 +89,14 @@ def get_activated_socket() -> Optional[socket.socket]:
 def main() -> None:
     conn = get_activated_socket()
     if conn is not None:
+        # Используем сокет systemd
         with conn:
             while True:
                 client_socket, _ = conn.accept()
                 handle_connection(client_socket)
         return
-
+    
+    # Безусловное создание собственного сокета как запасной вариант 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listening_socket:
         listening_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         listening_socket.bind(('127.0.0.1', 8888))
