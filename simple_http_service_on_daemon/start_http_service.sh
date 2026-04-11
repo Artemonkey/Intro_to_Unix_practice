@@ -1,24 +1,38 @@
 #!/usr/bin/env bash
 # Initial startup script for http service
 
-# Installation function for systemd configuration files of http service
 function install_Systemd_Configs() {
-    # Create folders for configs
-    if [ ! -d ~/.config/systemd/user ]; then
-        mkdir -p ~/.config/systemd/user
-    fi
+    local target_dir="$HOME/.config/systemd/user"
+    local project_dir="$PWD"
 
-    if [ -e "$PWD"/friendly.service ]; then
-        cp "$PWD"/friendly.service "$HOME"/.config/systemd/user/friendly.service
-    else
-        echo -e "Нет обязательной конфигурации в текущей папке $PWD/friendly.service"
+    if [ ! -e "$project_dir/http_service.py" ]; then
+        echo "Не найден файл $project_dir/http_service.py"
         exit 1
     fi
 
-    if [ -e "$PWD"/friendly.socket ]; then
-        cp "$PWD"/friendly.socket "$HOME"/.config/systemd/user/friendly.socket
+    mkdir -p "$target_dir"
+
+    cat > "$target_dir/friendly.service" <<EOF
+[Unit]
+Description=A simple http service
+After=network.target friendly.socket
+Requires=friendly.socket
+
+[Service]
+Type=simple
+WorkingDirectory=$project_dir
+ExecStart=/usr/bin/python3 ./http_service.py
+Sockets=friendly.socket
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+EOF
+
+    if [ -e "$project_dir/friendly.socket" ]; then
+        cp "$project_dir/friendly.socket" "$target_dir/friendly.socket"
     else
-        echo -e "Нет обязательной конфигурации в текущей папке $PWD/friendly.socket"
+        echo "Нет обязательной конфигурации в текущей папке $project_dir/friendly.socket"
         exit 1
     fi
 }
