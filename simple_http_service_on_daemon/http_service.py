@@ -76,7 +76,10 @@ def get_activated_socket() -> Optional[socket.socket]:
 def main() -> None:
     conn = get_activated_socket()
     if conn is not None:
-        handle_connection(conn)
+        with conn:
+            while True:
+                client_socket, _ = conn.accept()
+                handle_connection(client_socket)
         return
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listening_socket:
