@@ -10,5 +10,6 @@
 
 1. [Генератор паролей](https://github.com/Artemonkey/Intro_to_Unix_practice/blob/main/password_generator/)
 2. [Анализатор зависимостей](https://github.com/Artemonkey/Intro_to_Unix_practice/blob/main/shell_scripts_dependencies_analizer/)
+3. [HTTP сервис на systemd](https://github.com/Artemonkey/Intro_to_Unix_practice/blob/main/simple_http_service_on_daemon/)
 
 Преподаватель курса - к.т.н, доцент каферды ИТиСУ, Мисилов В. Е.
